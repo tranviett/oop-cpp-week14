@@ -7,179 +7,155 @@ using namespace std;
 
 class Employee {
 private:
-    string id, phone, address;
+    string cccd, phone, address;
 
 public:
-    Employee(string i = "", string p = "", string a = "") {
-        id = i;
-        phone = p;
-        address = a;
-    }
+    Employee() : cccd(""), phone(""), address("") {}
 
-    string getId() { return id; }
-    void setId(string i) { id = i; }
+    Employee(string c, string p, string a)
+        : cccd(c), phone(p), address(a) {}
 
-    string getPhone() { return phone; }
-    void setPhone(string p) { phone = p; }
-
-    string getAddress() { return address; }
-    void setAddress(string a) { address = a; }
+    virtual double calculateSalary(int month, int year) = 0;
+    virtual double calculateYearlySalary(int year) = 0;
 
     virtual void displayInfo() {
-        cout << "ID: " << id << "\nPhone: " << phone
-             << "\nAddress: " << address << endl;
+        cout << "CCCD: " << cccd << endl;
+        cout << "Phone: " << phone << endl;
+        cout << "Address: " << address << endl;
     }
 
-    virtual double calculateSalary(int m, int y) = 0;
-    virtual double calculateYearlySalary(int y) = 0;
-    virtual ~Employee() {}
+    virtual ~Employee() = default;
 };
 
 class HourlyEmployee : public Employee {
 private:
-    double rate;
-    int month[MAX], year[MAX], hour[MAX], n;
+    double salaryPerHour;
+    int hours[MAX], month[MAX], year[MAX], count;
 
 public:
-    HourlyEmployee(string i, string p, string a, double r)
-        : Employee(i, p, a) {
-        rate = r;
-        n = 0;
-    }
+    HourlyEmployee(string c, string p, string a, double s)
+        : Employee(c, p, a), salaryPerHour(s), count(0) {}
 
-    double getRate() { return rate; }
-    void setRate(double r) { rate = r; }
-
-    void addRecord(int m, int y, int h) {
-        if (n < MAX) {
-            month[n] = m;
-            year[n] = y;
-            hour[n] = h;
-            n++;
+    void addRecord(int h, int m, int y) {
+        if (count < MAX) {
+            hours[count] = h;
+            month[count] = m;
+            year[count] = y;
+            count++;
         }
     }
 
     double calculateSalary(int m, int y) override {
-        double sum = 0;
-        for (int i = 0; i < n; i++)
+        double total = 0;
+        for (int i = 0; i < count; i++)
             if (month[i] == m && year[i] == y)
-                sum += hour[i] * rate;
-        return sum;
+                total += hours[i] * salaryPerHour;
+        return total;
     }
 
     double calculateYearlySalary(int y) override {
-        double sum = 0;
-        for (int i = 0; i < n; i++)
+        double total = 0;
+        for (int i = 0; i < count; i++)
             if (year[i] == y)
-                sum += hour[i] * rate;
-        return sum;
+                total += hours[i] * salaryPerHour;
+        return total;
     }
 };
 
 class MonthlyEmployee : public Employee {
 private:
-    double salary;
-    int month[MAX], year[MAX], n;
+    double monthlySalary;
+    int month[MAX], year[MAX], count;
 
 public:
-    MonthlyEmployee(string i, string p, string a, double s)
-        : Employee(i, p, a) {
-        salary = s;
-        n = 0;
-    }
-
-    double getSalary() { return salary; }
-    void setSalary(double s) { salary = s; }
+    MonthlyEmployee(string c, string p, string a, double s)
+        : Employee(c, p, a), monthlySalary(s), count(0) {}
 
     void addRecord(int m, int y) {
-        if (n < MAX) {
-            month[n] = m;
-            year[n] = y;
-            n++;
+        if (count < MAX) {
+            month[count] = m;
+            year[count] = y;
+            count++;
         }
     }
 
     double calculateSalary(int m, int y) override {
-        double sum = 0;
-        for (int i = 0; i < n; i++)
+        double total = 0;
+        for (int i = 0; i < count; i++)
             if (month[i] == m && year[i] == y)
-                sum += salary;
-        return sum;
+                total += monthlySalary;
+        return total;
     }
 
     double calculateYearlySalary(int y) override {
-        double sum = 0;
-        for (int i = 0; i < n; i++)
+        double total = 0;
+        for (int i = 0; i < count; i++)
             if (year[i] == y)
-                sum += salary;
-        return sum;
+                total += monthlySalary;
+        return total;
     }
 };
 
 class DailyEmployee : public Employee {
 private:
-    double rate;
-    int month[MAX], year[MAX], day[MAX], n;
+    double salaryPerDay;
+    int days[MAX], month[MAX], year[MAX], count;
 
 public:
-    DailyEmployee(string i, string p, string a, double r)
-        : Employee(i, p, a) {
-        rate = r;
-        n = 0;
-    }
+    DailyEmployee(string c, string p, string a, double s)
+        : Employee(c, p, a), salaryPerDay(s), count(0) {}
 
-    double getRate() { return rate; }
-    void setRate(double r) { rate = r; }
-
-    void addRecord(int m, int y, int d) {
-        if (n < MAX) {
-            month[n] = m;
-            year[n] = y;
-            day[n] = d;
-            n++;
+    void addRecord(int d, int m, int y) {
+        if (count < MAX) {
+            days[count] = d;
+            month[count] = m;
+            year[count] = y;
+            count++;
         }
     }
 
     double calculateSalary(int m, int y) override {
-        double sum = 0;
-        for (int i = 0; i < n; i++)
+        double total = 0;
+        for (int i = 0; i < count; i++)
             if (month[i] == m && year[i] == y)
-                sum += day[i] * rate;
-        return sum;
+                total += days[i] * salaryPerDay;
+        return total;
     }
 
     double calculateYearlySalary(int y) override {
-        double sum = 0;
-        for (int i = 0; i < n; i++)
+        double total = 0;
+        for (int i = 0; i < count; i++)
             if (year[i] == y)
-                sum += day[i] * rate;
-        return sum;
+                total += days[i] * salaryPerDay;
+        return total;
     }
 };
 
 int main() {
-    HourlyEmployee e1("NV01", "091234", "HCM", 50000);
-    e1.addRecord(10, 2026, 160);
-    e1.addRecord(11, 2026, 150);
+    HourlyEmployee h("001", "0901", "HCM", 50000);
+    h.addRecord(26, 1, 2026);
+    h.addRecord(24, 2, 2026);
+    h.addRecord(30, 12, 2026);
 
-    MonthlyEmployee e2("NV02", "092345", "Dong Nai", 15000000);
-    e2.addRecord(10, 2026);
-    e2.addRecord(11, 2026);
+    MonthlyEmployee m("002", "0902", "Dong Nai", 15000000);
+    m.addRecord(1, 2026);
+    m.addRecord(2, 2026);
+    m.addRecord(12, 2026);
 
-    DailyEmployee e3("NV03", "093456", "Ha Noi", 400000);
-    e3.addRecord(10, 2026, 22);
-    e3.addRecord(11, 2026, 25);
+    DailyEmployee d("003", "0903", "Ha Noi", 400000);
+    d.addRecord(26, 1, 2026);
+    d.addRecord(24, 2, 2026);
+    d.addRecord(30, 12, 2026);
 
-    Employee* list[] = {&e1, &e2, &e3};
+    Employee* employees[] = {&h, &m, &d};
 
-    for (Employee* e : list) {
-        e->displayInfo();
-        cout << "Salary in October: "
-             << e->calculateSalary(10, 2026) << endl;
-        cout << "Salary in 2026: "
-             << e->calculateYearlySalary(2026) << endl;
-        cout << "------------------" << endl;
-    }
+    cout << "=== SALARY MONTH 1/2026 ===" << endl;
+    for (Employee* e : employees)
+        cout << e->calculateSalary(1, 2026) << endl;
+
+    cout << "\n=== YEARLY SALARY 2026 ===" << endl;
+    for (Employee* e : employees)
+        cout << e->calculateYearlySalary(2026) << endl;
 
     return 0;
 }
